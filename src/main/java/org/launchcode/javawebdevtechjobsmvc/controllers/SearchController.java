@@ -25,39 +25,32 @@ public class SearchController {
     }
 
     // TODO #3 - Create a handler to process a search request and render the updated search view.
-    @PostMapping("search/results")
- public String displaySearchResults(Model model, @RequestParam String search, @RequestParam String results, @ModelAttribute Job job){
+    @PostMapping("results")
+ public String displaySearchResults(Model model, @RequestParam String searchTerm, @RequestParam String searchType){
 
+        ArrayList<Job> jobs = new ArrayList<>();
+        if (searchTerm.toLowerCase().equals("all")) {
+            jobs = JobData.findAll();
+            model.addAttribute("jobs", JobData.findAll() );
 
-        if (search.toLowerCase().equals("all")) {
+        } else if (searchTerm.equals("")){
             jobs = JobData.findAll();
-            jobs.add(job);
-            model.addAttribute("jobs", jobs);
-        } else if (search.equals("")){
-            jobs = JobData.findAll();
-            jobs.add(job);
-            model.addAttribute("jobs", jobs);
+            model.addAttribute("jobs", JobData.findAll());
         } else {
+            jobs = JobData.findByColumnAndValue(searchType, searchTerm);
             model.addAttribute("columns", ListController.columnChoices);
-            //jobs = JobData.findByColumnAndValue(column, value);
         }
-//        if (searchTerm.equals("all")) {
-//            searchTerm.toUpperCase();
-//            results.toUpperCase();
-//            jobs.add(job);
-//            JobData.findAll();
-//        }
-//
-//        if (searchTerm.equals("")){
-//            searchTerm.toUpperCase();
-//            results.toUpperCase();
-//            jobs.add(job);
-//            JobData.findAll();
-//        }
-
-//        model.addAttribute("jobs", jobs);
-//        model.addAttribute("columns", ListController.columnChoices);
-        return "search/results";
+        if (searchType.equals("all")){
+           jobs = JobData.findAll();
+            model.addAttribute("jobs", JobData.findAll());
+        } else {
+            jobs = JobData.findByColumnAndValue(searchType, searchTerm);
+            model.addAttribute("jobs", jobs);
+        }
+        
+//           model.addAttribute("jobs", jobs);
+//           model.addAttribute("columns", ListController.columnChoices);
+            return "search";
 
 
     }
